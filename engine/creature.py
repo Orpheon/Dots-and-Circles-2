@@ -28,10 +28,10 @@ class Creature(GameObject):
 
     def step(self, game):
         # Get the new eye positions
-        x1 = math.sin(self.direction)*self.EYE_SEPARATION/2
-        y1 = math.cos(self.direction)*self.EYE_SEPARATION/2
-        x2 = math.sin(self.direction)*self.EYE_SEPARATION/-2
-        y2 = math.cos(self.direction)*self.EYE_SEPARATION/-2
+        x1 = self.x + math.sin(self.direction)*self.EYE_SEPARATION/2
+        y1 = self.y + math.cos(self.direction)*self.EYE_SEPARATION/2
+        x2 = self.x + math.sin(self.direction)*self.EYE_SEPARATION/-2
+        y2 = self.y+ math.cos(self.direction)*self.EYE_SEPARATION/-2
 
         # Put the eyes there
         self.lefteye.update(x1, y1, self.direction)
@@ -43,7 +43,7 @@ class Creature(GameObject):
 
         # Interpret that world, and give some action
         # FIXME: DISABLED
-        motorleft, motorright = 1, 1#self.brain.process(self.leftimage, self.rightimage)
+        motorleft, motorright = self.brain.process(self.leftimage, self.rightimage)
 
         # Turn the tank
         rotation = motorleft-motorright # Get the direction changes
@@ -88,7 +88,7 @@ class Creature(GameObject):
 
         # Draw what the creature sees
         pygame.draw.rect(surface, (255, 255, 255), pygame.rect.Rect(0, surface.get_height()-100, surface.get_width(), surface.get_height()), 1)
-        compartiment_size = surface.get_width()/(len(self.leftimage)+len(self.rightimage))
+        compartiment_size = surface.get_width()/len(self.leftimage)
 
         for raw_color in self.leftimage:
             if raw_color == self.COLOR_NOTHING:

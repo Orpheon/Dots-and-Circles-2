@@ -8,4 +8,4 @@ while True:
     game.step()
 
 
-# TODO: create graphical stuff (polling), create evolution, and persistence
+# TODO: Neural networks return values of 1, why? Eye position setting is compeltely wrong.

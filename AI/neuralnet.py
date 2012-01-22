@@ -125,12 +125,12 @@ class NeuralNetwork(object):
         return output
 
 
-        def process(self, leftimage, rightimage):
-            input = leftimage+rightimage
-            output = self.run(input)
-            if len(output) != 2:
-                print("Wrong output length")
-            return output[0]*10, output[1]*10
+    def process(self, leftimage, rightimage):
+        input = leftimage+rightimage
+        output = self.run(input)
+        if len(output) != 2:
+            print("Wrong output length")
+        return output[0]*10, output[1]*10
 
 
     def get_random_weights(self):

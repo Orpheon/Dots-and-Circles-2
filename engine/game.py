@@ -7,7 +7,7 @@ from food import Food
 from AI import neuralnet
 
 class Game(object):
-    NUM_CREATURES = 1
+    NUM_CREATURES = 30
     NUM_FOOD = 50
     WINDOW_SIZE = (1280, 924)
     RENDERING_ON = True
@@ -27,6 +27,8 @@ class Game(object):
             Food(self, random.randint(0, self.WINDOW_SIZE[0]), random.randint(0, self.WINDOW_SIZE[1]))
 
     def step(self):
+        pygame.event.clear()
+
         # Let each creature deacide and react
         for creature in self.creaturelist:
             creature.step(self)

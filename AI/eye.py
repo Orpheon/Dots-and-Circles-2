@@ -3,9 +3,8 @@ from __future__ import division
 import math
 
 class Eye(object):
-    MAX_EYESIGHT = 500
+    MAX_EYESIGHT = 5000
     FOV = 160
-    IMAGE_RESOLUTION = 360
     def __init__(self, owner, game):
         self.owner = owner
         self.x = 0
@@ -18,15 +17,12 @@ class Eye(object):
         self.direction = direction
 
     def render(self, game):
-        distances = []
-        raw_image = {}
-        for i in range(self.IMAGE_RESOLUTION):
-            distances.append(self.MAX_EYESIGHT+1)
-            raw_image[i] = self.owner.COLOR_NOTHING
+        distances = [self.MAX_EYESIGHT+1]*360
+        raw_image = [self.owner.COLOR_NOTHING]*360
 
         for creature in game.creaturelist:
             angle = math.atan2(creature.y-self.y, creature.x-self.x)
-            angle = int(math.degrees(angle)*self.IMAGE_RESOLUTION/360)
+            angle = int(math.degrees(angle))
             distance = math.hypot(creature.x-self.x, creature.y-self.y)
             if distances[angle] > distance:# If the creature is nearer than the last object stored in that pixel
                 distances[angle] = distance
@@ -34,26 +30,18 @@ class Eye(object):
 
         for food in game.foodlist:
             angle = math.atan2(food.y-self.y, food.x-self.x)
-            angle = int(math.degrees(angle)*self.IMAGE_RESOLUTION/360)
+            angle = int(math.degrees(angle))
             distance = math.hypot(food.x-self.x, food.y-self.y)
             if distances[angle] > distance:# If the food is nearer than the last object stored in that pixel
                 distances[angle] = distance
                 raw_image[angle] = self.owner.COLOR_FOOD
 
-        # Now remove anything not in the FOV, and store what is in a list
-        offset = self.FOV/-2
+        # Now remove anything not in the FOV
+        start_angle = int(self.direction - self.FOV/2)
+        stop_angle = int(start_angle + self.FOV)
         image = []
-        for i in range(self.FOV):
-            image.append(raw_image[clock_add(i, offset)])
+
+        for angle in range(start_angle, stop_angle):
+            image.append(raw_image[angle % 360])
 
         return image
-
-
-
-def clock_add(a, b, min=0, max=360):
-    c = a+b
-    while c < min:
-        c += max-min
-    while c > max:
-        c -= max-min
-    return c
