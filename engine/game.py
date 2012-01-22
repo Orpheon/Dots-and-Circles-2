@@ -9,7 +9,7 @@ from AI import neuralnet
 class Game(object):
     NUM_CREATURES = 1
     NUM_FOOD = 50
-    WINDOW_SIZE = (1280, 1024)
+    WINDOW_SIZE = (1280, 924)
     RENDERING_ON = True
 
     def __init__(self):
@@ -17,7 +17,7 @@ class Game(object):
         self.foodlist = []
 
         if self.RENDERING_ON:
-            self.window = pygame.display.set_mode(self.WINDOW_SIZE)
+            self.window = pygame.display.set_mode((self.WINDOW_SIZE[0], self.WINDOW_SIZE[1]+100))
             self.surface = pygame.display.get_surface()
 
         for i in range(self.NUM_CREATURES):

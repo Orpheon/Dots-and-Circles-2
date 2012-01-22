@@ -23,6 +23,8 @@ class Creature(GameObject):
         self.brain = brain
         self.lefteye = eye.Eye(self, game)
         self.righteye = eye.Eye(self, game)
+        self.leftimage = []
+        self.rightimage = []
 
     def step(self, game):
         # Get the new eye positions
@@ -36,12 +38,12 @@ class Creature(GameObject):
         self.righteye.update(x2, y2, self.direction)
 
         # Look at the world through them
-        leftimage = self.lefteye.render(game)
-        rightimage = self.righteye.render(game)
+        self.leftimage = self.lefteye.render(game)
+        self.rightimage = self.righteye.render(game)
 
         # Interpret that world, and give some action
         # FIXME: DISABLED
-        motorleft, motorright = 1, 1#self.brain.process(leftimage, rightimage)
+        motorleft, motorright = 1, 1#self.brain.process(self.leftimage, self.rightimage)
 
         # Turn the tank
         rotation = motorleft-motorright # Get the direction changes
@@ -67,7 +69,35 @@ class Creature(GameObject):
         self.brain = None
         game.creaturelist.remove(self)
 
-
     def render(self, surface):
+        # Main body
         pygame.draw.circle(surface, (255, 0, 0), (int(self.x), int(self.y)), self.size)
-        pygame.draw.line(surface, (255, 0, 0), (int(self.x), int(self.y)), (int(self.x+self.hspeed), int(self.y+self.vspeed)))
+
+        # Line pointing in direction
+        pygame.draw.line(surface, (255, 0, 0), (int(self.x), int(self.y)), (int(self.x+self.hspeed*10), int(self.y+self.vspeed*10)))
+
+        # Eye positions
+        x1 = self.x + math.sin(self.direction)*self.EYE_SEPARATION/2
+        y1 = self.y + math.cos(self.direction)*self.EYE_SEPARATION/2
+        x2 = self.x + math.sin(self.direction)*self.EYE_SEPARATION/-2
+        y2 = self.y + math.cos(self.direction)*self.EYE_SEPARATION/-2
+
+        # Draw the eyes
+        pygame.draw.circle(surface, (255, 255, 0), (int(x1), int(y1)), 2)
+        pygame.draw.circle(surface, (255, 255, 0), (int(x2), int(y2)), 2)
+
+        # Draw what the creature sees
+        pygame.draw.rect(surface, (255, 255, 255), pygame.rect.Rect(0, surface.get_height()-100, surface.get_width(), surface.get_height()), 1)
+        compartiment_size = surface.get_width()/(len(self.leftimage)+len(self.rightimage))
+
+        for raw_color in self.leftimage:
+            if raw_color == self.COLOR_NOTHING:
+                color = (0, 0, 0)
+            elif raw_color == self.COLOR_CREATURE:
+                color = (255, 0, 0)
+            elif raw_color == self.COLOR_FOOD:
+                color = (0, 255, 0)
+
+            offset = self.leftimage.index(raw_color) * compartiment_size
+            rect = pygame.rect.Rect(offset, surface.get_height()-100, offset+compartiment_size, surface.get_height())
+            pygame.draw.rect(surface, color, rect)
